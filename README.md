@@ -4,6 +4,19 @@ A full-stack workbench for building **typed, calibrated decisions** with TypeSaf
 
 Inspired by the Maven workshop *Build an AI Decision Engine with Jev: Beyond Chatbots*.
 
+### Why I built this
+
+Most AI features bolt a chatbot onto a workflow and hope users can parse the prose. Most product decisions inside an app aren't conversations. They're quick judgment calls: *Is this ticket billing or a bug? Is it urgent? Can we act, or do we need a person?*
+
+This project treats those calls as the product. Each one is a typed question (yes/no, pick-one, or rate-on-a-scale) that comes back with a calibrated probability. Explicit thresholds then decide when the system acts on its own and when it hands off to a human, with the reason attached.
+
+**What it shows about how I work:**
+
+- **Designing the human handoff:** automation is gated on confidence *and* clarity. A 100%-certain category still escalates when the ticket is too vague to act on.
+- **Testing with real usage, not demos:** live testing showed my first "is this ambiguous?" question escalated *every* ticket. I traced it to the question's wording, not the model, rewrote it, and clear tickets dropped from 50–83% to 7–16% ambiguity while the vague one stayed at 95%.
+- **Measured trade-offs:** about 0.4–1.4 s and under $0.00003 per decision, measured rather than estimated.
+- **Shipped end to end:** working app, four use cases (support triage, work routing, video clipping, a build-your-own playground), 27 tests, a demo video and a no-setup offline demo.
+
 ---
 
 ## Architectural overview
