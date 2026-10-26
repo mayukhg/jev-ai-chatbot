@@ -62,6 +62,21 @@ tests/                   # client, triage gate, and API contract tests
 
 ---
 
+## Demo
+
+- **Workflow video:** [docs/media/jev-workbench-demo.mp4](docs/media/jev-workbench-demo.mp4) is an 87-second end-to-end run against the live API.
+- **Screenshots:** [docs/media/screenshots/](docs/media/screenshots/) holds each tab with real Jev answers.
+- **Offline mock:** [demo/jev-workbench-mock.html](demo/jev-workbench-mock.html) is a single self-contained file that runs the same four tabs, questions and gates in the browser with simulated answers. It needs no server and no key.
+
+To regenerate the video and screenshots after a UI change, start the app and run:
+
+```bash
+pip install -r requirements-dev.txt
+python scripts/capture_media.py
+```
+
+---
+
 ## Quickstart
 
 Requires Python 3.11 or newer.

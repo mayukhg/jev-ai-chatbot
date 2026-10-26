@@ -18,7 +18,9 @@
 .meter > span { display: block; height: 100%; border-radius: 9999px; transition: width 400ms ease; }
 
 .gauge { display: grid; grid-template-columns: repeat(var(--levels), 1fr); gap: 4px; }
-.gauge > div { height: 0.6rem; border-radius: 3px; background: rgb(30 41 59); }
+.gauge > div { height: 0.6rem; border-radius: 3px; }
+/* Zero-specificity default so Tailwind bg-* classes on filled segments win. */
+:where(.gauge > div) { background: rgb(30 41 59); }
 
 .status-auto { background: rgb(22 101 52 / 0.35); color: rgb(134 239 172); border: 1px solid rgb(34 197 94 / 0.5); }
 .status-escalate { background: rgb(146 64 14 / 0.35); color: rgb(252 211 77); border: 1px solid rgb(245 158 11 / 0.55); }
