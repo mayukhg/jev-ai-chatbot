@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jev Decision Workbench</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>tailwind.config = { darkMode: "class" };</script>
+  <link rel="stylesheet" href="/static/css/app.css" />
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3 justify-between">
+      <div>
+        <h1 class="text-lg font-semibold tracking-tight">Jev Decision Engine <span class="text-slate-400 font-normal">Workbench</span></h1>
+        <p class="text-xs text-slate-400">System 1 decisions · Noul · Choice · Score</p>
+      </div>
+      <div class="flex items-center gap-2 text-sm">
+        <span id="mode-badge" class="badge bg-slate-800 text-slate-300">Checking…</span>
+        <span id="model-badge" class="badge bg-slate-800 text-slate-300 font-mono"></span>
+        <span class="badge bg-slate-800 text-slate-300">Latency <strong id="latency" class="ml-1 font-mono text-slate-100">—</strong></span>
+      </div>
+    </div>
+    <div id="setup-banner" class="hidden bg-amber-500/10 border-t border-amber-500/30 text-amber-200 text-xs">
+      <div class="max-w-6xl mx-auto px-4 py-2">
+        Running on simulated decisions because <code>.env</code> still has placeholder credentials. Add your OpenRouter key to <code>.env</code> and restart for live calls.
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <nav class="flex gap-1 overflow-x-auto border-b border-slate-800 mb-6" role="tablist">
+      <button class="tab active" data-tab="triage" role="tab">Ticket Triage Studio</button>
+      <button class="tab" data-tab="route" role="tab">Task Router</button>
+      <button class="tab" data-tab="clip" role="tab">Transcript Clipper</button>
+      <button class="tab" data-tab="custom" role="tab">Decisions Playground</button>
+    </nav>
+
+    <!-- Tab 1: Ticket triage -->
+    <section id="tab-triage" class="panel grid lg:grid-cols-2 gap-6">
+      <form id="triage-form" class="card space-y-4">
+        <div>
+          <label class="label" for="triage-preset">Preset</label>
+          <select id="triage-preset" class="input"></select>
+        </div>
+        <div>
+          <label class="label" for="triage-subject">Subject</label>
+          <input id="triage-subject" class="input" placeholder="Optional" />
+        </div>
+        <div>
+          <label class="label" for="triage-text">Ticket text</label>
+          <textarea id="triage-text" class="input h-40" required></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="label" for="triage-tier">Customer tier</label>
+            <select id="triage-tier" class="input">
+              <option value="">—</option><option>free</option><option>pro</option><option>enterprise</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="triage-channel">Channel</label>
+            <select id="triage-channel" class="input">
+              <option value="">—</option><option>email</option><option>chat</option><option>phone</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn" type="submit">Run triage</button>
+      </form>
+      <div id="triage-result" class="card"><p class="empty">Run a ticket to see the decision.</p></div>
+    </section>
+
+    <!-- Tab 2: Task router -->
+    <section id="tab-route" class="panel hidden grid lg:grid-cols-2 gap-6">
+      <div class="space-y-6">
+        <form id="route-form" class="card space-y-4">
+          <div>
+            <label class="label" for="route-title">Task title</label>
+            <input id="route-title" class="input" required value="Build Q3 churn dashboard for the exec review" />
+          </div>
+          <div>
+            <label class="label" for="route-desc">Description</label>
+            <textarea id="route-desc" class="input h-28">Need a dashboard with monthly churn metrics, cohort retention, and a SQL export of the underlying data.</textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="label" for="route-requester">Requester</label>
+              <input id="route-requester" class="input" placeholder="Optional" />
+            </div>
+            <div>
+              <label class="label" for="route-deadline">Deadline</label>
+              <input id="route-deadline" class="input" type="date" />
+            </div>
+          </div>
+          <button class="btn" type="submit">Dispatch task</button>
+        </form>
+        <div class="card">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold text-slate-300">Queue allocations (this session)</h3>
+            <button id="route-reset" class="text-xs text-slate-400 hover:text-slate-200" type="button">Reset</button>
+          </div>
+          <div id="route-queues" class="space-y-2"></div>
+        </div>
+      </div>
+      <div id="route-result" class="card"><p class="empty">Dispatch a task to see where it goes.</p></div>
+    </section>
+
+    <!-- Tab 3: Transcript clipper -->
+    <section id="tab-clip" class="panel hidden grid lg:grid-cols-2 gap-6">
+      <form id="clip-form" class="card space-y-4">
+        <div>
+          <label class="label" for="clip-title">Video title</label>
+          <input id="clip-title" class="input" value="Founder AMA: lessons from year one" />
+        </div>
+        <div>
+          <label class="label" for="clip-segment">Transcript segment</label>
+          <textarea id="clip-segment" class="input h-48" required>Here's the thing nobody tells you: we almost shut the company down in month eight. What saved us was one customer email that showed us we were solving the wrong problem. We rebuilt the product in six weeks and revenue tripled.</textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="label" for="clip-start">Start</label><input id="clip-start" class="input font-mono" value="00:12:04" /></div>
+          <div><label class="label" for="clip-end">End</label><input id="clip-end" class="input font-mono" value="00:12:31" /></div>
+        </div>
+        <button class="btn" type="submit">Evaluate segment</button>
+      </form>
+      <div id="clip-result" class="card"><p class="empty">Evaluate a segment to see its clip readout.</p></div>
+    </section>
+
+    <!-- Tab 4: Custom playground -->
+    <section id="tab-custom" class="panel hidden grid lg:grid-cols-2 gap-6">
+      <form id="custom-form" class="card space-y-4">
+        <div>
+          <label class="label" for="custom-state">Context (state)</label>
+          <textarea id="custom-state" class="input h-28" required>Customer wrote: "Love the new reports feature, but exporting to CSV fails every time with a timeout error."</textarea>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="label mb-0">Questions</span>
+          <div class="flex gap-2">
+            <button type="button" class="chip" data-add="choice">+ Choice</button>
+            <button type="button" class="chip" data-add="score">+ Score</button>
+            <button type="button" class="chip" data-add="noul">+ Noul</button>
+          </div>
+        </div>
+        <div id="custom-questions" class="space-y-3"></div>
+        <div>
+          <label class="label" for="custom-threshold">Confidence threshold <span id="custom-threshold-val" class="font-mono text-slate-300">0.70</span></label>
+          <input id="custom-threshold" type="range" min="0" max="1" step="0.05" value="0.7" class="w-full accent-sky-500" />
+        </div>
+        <button class="btn" type="submit">Run decision</button>
+      </form>
+      <div id="custom-result" class="card"><p class="empty">Build questions and run a decision.</p></div>
+    </section>
+  </main>
+
+  <template id="tpl-question">
+    <div class="question rounded-lg border border-slate-700 bg-slate-900 p-3 space-y-2">
+      <div class="flex items-center gap-2">
+        <span class="q-type badge"></span>
+        <input class="input q-key font-mono text-xs flex-1" placeholder="question_key" />
+        <button type="button" class="q-remove text-slate-500 hover:text-red-400 text-sm px-1" aria-label="Remove question">✕</button>
+      </div>
+      <input class="input q-instructions" placeholder="Instructions" />
+      <textarea class="input q-criteria h-20 font-mono text-xs"></textarea>
+      <p class="q-hint text-[11px] text-slate-500"></p>
+    </div>
+  </template>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
