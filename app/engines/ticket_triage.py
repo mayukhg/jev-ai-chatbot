@@ -54,10 +54,19 @@ def build_triage_request(ticket: TicketInput, model: str) -> DecisionRequest:
             "category": ChoiceQuestion(instructions="Categorize the support ticket.", criteria=CATEGORIES),
             "urgency": ScoreQuestion(instructions="Rate the urgency of the ticket.", criteria=URGENCY_GUIDANCE),
             "ambiguity": NoulQuestion(
-                instructions="Is this request ambiguous, incomplete, or lacking critical detail?",
+                instructions=(
+                    "Is this support ticket too ambiguous or incomplete for an agent to act on "
+                    "without first asking the customer a clarifying question?"
+                ),
                 criteria=NoulCriteria(
-                    true="The ticket is vague, very short, or missing details such as steps, error messages, or account info.",
-                    false="The ticket clearly states the problem and gives enough detail to act on it.",
+                    true=(
+                        "The agent cannot tell what the problem or request is, which product area it "
+                        "concerns, or what outcome the customer wants."
+                    ),
+                    false=(
+                        "The customer's problem or request and the desired outcome are clear enough to "
+                        "start working on; routine lookups such as account details are fine."
+                    ),
                 ),
             ),
         },
