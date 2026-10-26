@@ -77,9 +77,12 @@ tests/                   # client, triage gate, and API contract tests
 
 ## Demo
 
-- **Workflow video:** [docs/media/jev-workbench-demo.mp4](docs/media/jev-workbench-demo.mp4) is an 87-second end-to-end run against the live API.
-- **Screenshots:** [docs/media/screenshots/](docs/media/screenshots/) holds each tab with real Jev answers.
-- **Offline mock:** [demo/jev-workbench-mock.html](demo/jev-workbench-mock.html) is a single self-contained file that runs the same four tabs, questions and gates in the browser with simulated answers. It needs no server and no key.
+| What | Where | Notes |
+|------|-------|-------|
+| **Video recording** | [`docs/media/jev-workbench-demo.mp4`](docs/media/jev-workbench-demo.mp4) in this repo | 87-second end-to-end run of all four tabs against the live API |
+| **Slide deck** | [Jev Decision Engine Explainer](https://claude.ai/artifact/ASrnc7bSPzpXmcc6TEDa5S) (hosted on claude.ai) | 17 slides with live screenshots and the embedded video; opens only for people the owner has shared it with |
+| **Mockup app** | [`demo/jev-workbench-mock.html`](demo/jev-workbench-mock.html) in this repo, also [hosted on claude.ai](https://claude.ai/artifact/HTUB1d6Kq7QrCkYZzshdNr) | One self-contained HTML file: same four tabs, questions and gates, with simulated answers. Download it and open it in a browser; no server or key needed |
+| **Screenshots** | [`docs/media/screenshots/`](docs/media/screenshots/) in this repo | Each tab with real Jev answers, as used in the deck |
 
 To regenerate the video and screenshots after a UI change, start the app and run:
 
